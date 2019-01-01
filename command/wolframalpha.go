@@ -17,7 +17,7 @@ func WolframAlpha(args string) (string, error) {
 
 	appid := os.Getenv("WOLFRAM_ALPHA_API_KEY")
 	query := url.QueryEscape(args)
-	apiurl := fmt.Sprintf("http://api.wolframalpha.com/v1/result?appid=%s&i=%s", appid, query)
+	apiurl := fmt.Sprintf("http://api.wolframalpha.com/v1/result?appid=%s&units=metric&i=%s", appid, query)
 
 	res, err := http.Get(apiurl)
 	if err != nil {

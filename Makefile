@@ -16,4 +16,4 @@ test:
 	go test -v ./...
 
 publish: test build
-	aws lambda update-function-code --function-name $(FUNCNAME) --zip-file fileb://$(BUILDDIR)/$(FUNCNAME).zip
+	aws lambda update-function-code --publish --function-name $(FUNCNAME) --zip-file fileb://$(BUILDDIR)/$(FUNCNAME).zip

@@ -4,7 +4,7 @@ BUILDDIR=build
 .PHONY: build
 
 # from https://unix.stackexchange.com/a/235254
-include .env
+-include .env
 export $(shell sed 's/=.*//' .env)
 
 

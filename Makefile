@@ -15,5 +15,8 @@ build: test
 test:
 	go test -v ./...
 
-publish: test build
+lint:
+	-golangci-lint run ./...
+
+publish: test lint build
 	aws lambda update-function-code --publish --function-name $(FUNCNAME) --zip-file fileb://$(BUILDDIR)/$(FUNCNAME).zip

@@ -78,7 +78,7 @@ func OpenWeather(args string) (string, error) {
 
 	response, err := parseWeather(bytes)
 
-	return response, nil
+	return response, err
 }
 
 // Use a formula to calculate wind chill from current temperature in Celsius and wind in m/s

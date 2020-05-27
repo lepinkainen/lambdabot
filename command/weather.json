@@ -5,37 +5,38 @@
     },
     "weather": [
         {
-            "id": 803,
+            "id": 804,
             "main": "Clouds",
-            "description": "broken clouds",
+            "description": "overcast clouds",
             "icon": "04n"
         }
     ],
     "base": "stations",
     "main": {
-        "temp": 2,
-        "pressure": 980,
-        "humidity": 100,
-        "temp_min": 2,
-        "temp_max": 2
+        "temp": 14.54,
+        "feels_like": 11.53,
+        "temp_min": 13.89,
+        "temp_max": 15,
+        "pressure": 1019,
+        "humidity": 58
     },
     "visibility": 10000,
     "wind": {
-        "speed": 3.6,
-        "deg": 210
+        "speed": 3.1,
+        "deg": 230
     },
     "clouds": {
-        "all": 75
+        "all": 100
     },
-    "dt": 1546357800,
+    "dt": 1590607200,
     "sys": {
         "type": 1,
         "id": 1332,
-        "message": 0.0312,
         "country": "FI",
-        "sunrise": 1546327433,
-        "sunset": 1546349057
+        "sunrise": 1590542133,
+        "sunset": 1590607179
     },
+    "timezone": 10800,
     "id": 658225,
     "name": "Helsinki",
     "cod": 200

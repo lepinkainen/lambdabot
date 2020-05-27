@@ -29,7 +29,7 @@ type OpenWeatherMapJSON struct {
 		Pressure int     `json:"pressure"`
 		Temp     float64 `json:"temp"`
 		TempMax  int     `json:"temp_max"`
-		TempMin  int     `json:"temp_min"`
+		TempMin  float64 `json:"temp_min"`
 	} `json:"main"`
 	Name string `json:"name"`
 	Sys  struct {

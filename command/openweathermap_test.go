@@ -24,7 +24,7 @@ func Test_parseWeather(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"GoldenFile1", args{bytes: loadJSON("weather.json")}, "Helsinki, FI: Temperature: 2.0°C, feels like: -1.6°C, wind: 3.6 m/s, humidity: 100%, pressure: 980hPa, cloudiness: 75%", false},
+		{"GoldenFile1", args{bytes: loadJSON("weather.json")}, "Helsinki, FI: Temperature: 14.5°C, feels like: 13.9°C, wind: 3.1 m/s, humidity: 58%, pressure: 1019hPa, cloudiness: 100%", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

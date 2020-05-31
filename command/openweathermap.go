@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// OpenWeatherMapJSON is the JSON response for weather
 type OpenWeatherMapJSON struct {
 	Base   string `json:"base"`
 	Clouds struct {
@@ -53,6 +54,7 @@ type OpenWeatherMapJSON struct {
 	} `json:"wind"`
 }
 
+// OpenWeather command handler
 func OpenWeather(args string) (string, error) {
 
 	if args == "" {

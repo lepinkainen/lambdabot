@@ -1,7 +1,7 @@
 module github.com/lepinkainen/lambdabot
 
 require (
-	github.com/aws/aws-lambda-go v1.17.0
+	github.com/aws/aws-lambda-go v1.18.0
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0

@@ -29,7 +29,7 @@ type TVMazeResponse struct {
 	OfficialSite string      `json:"officialSite"`
 	Schedule     Schedule    `json:"schedule"`
 	Weight       int         `json:"weight"`
-	Network      interface{} `json:"network"`
+	Network      WebChannel  `json:"network"`
 	WebChannel   WebChannel  `json:"webChannel"`
 	Summary      string      `json:"summary"`
 	Updated      int         `json:"updated"`
@@ -110,6 +110,32 @@ func nextEpResponse(data TVMazeResponse) string {
 
 }
 
+func latestEpResponse(data TVMazeResponse) string {
+	lastEp := data.Embedded.Episodes[len(data.Embedded.Episodes)-1]
+
+	// Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days) on Disney+
+	seriesname := data.Name
+
+	//fmt.Printf("%v\n", lastEp)
+
+	sxep := fmt.Sprintf("%dx%d", lastEp.Season, lastEp.Number)
+	epname := lastEp.Name
+	airdate := lastEp.Airdate
+	network := "[N/A]"
+	if data.WebChannel == (WebChannel{}) {
+		network = data.Network.Name
+	} else {
+		network = data.WebChannel.Name
+	}
+
+	status := ""
+	if data.Status == "Ended" {
+		status = " [Ended]"
+	}
+
+	return fmt.Sprintf("Latest episode of %s %s '%s' airs %s on %s%s", seriesname, sxep, epname, airdate, network, status)
+}
+
 // TVMaze search for tvmaze and list next episode in series
 func TVMaze(args string) (string, error) {
 	query := url.QueryEscape(args)
@@ -135,17 +161,7 @@ func TVMaze(args string) (string, error) {
 		return nextEpResponse(response), nil
 	}
 
-	// Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days) on Disney+
-	seriesname := response.Name
-
-	fmt.Printf("%v\n", response.Embedded.Nextepisode)
-
-	sxep := fmt.Sprintf("%dx%d", response.Embedded.Nextepisode.Season, response.Embedded.Nextepisode.Number)
-	epname := response.Embedded.Nextepisode.Name
-	airdate := response.Embedded.Nextepisode.Airdate
-	network := response.WebChannel.Name
-
-	return fmt.Sprintf("Next episode of %s %s '%s' airs %s on %s", seriesname, sxep, epname, airdate, network), nil
+	return latestEpResponse(response), nil
 }
 
 func init() {

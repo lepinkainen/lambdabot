@@ -104,7 +104,13 @@ func nextEpResponse(data TVMazeResponse) string {
 	sxep := fmt.Sprintf("%dx%d", data.Embedded.Nextepisode.Season, data.Embedded.Nextepisode.Number)
 	epname := data.Embedded.Nextepisode.Name
 	airdate := data.Embedded.Nextepisode.Airdate
-	network := data.WebChannel.Name
+
+	network := ""
+	if data.WebChannel == (WebChannel{}) {
+		network = data.Network.Name
+	} else {
+		network = data.WebChannel.Name
+	}
 
 	return fmt.Sprintf("Next episode of %s %s '%s' airs %s on %s", seriesname, sxep, epname, airdate, network)
 

@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/pkg/errors"
 
 	"github.com/lepinkainen/lambdabot/lambda"
@@ -104,6 +105,7 @@ func nextEpResponse(data TVMazeResponse) string {
 	sxep := fmt.Sprintf("%dx%02d", data.Embedded.Nextepisode.Season, data.Embedded.Nextepisode.Number)
 	epname := data.Embedded.Nextepisode.Name
 	airdate := data.Embedded.Nextepisode.Airdate
+	delta := fmt.Sprintf(" (%s)", humanize.Time(data.Embedded.Nextepisode.Airstamp))
 
 	network := ""
 	if data.WebChannel == (WebChannel{}) {
@@ -112,7 +114,7 @@ func nextEpResponse(data TVMazeResponse) string {
 		network = data.WebChannel.Name
 	}
 
-	return fmt.Sprintf("Next episode of %s %s '%s' airs %s on %s", seriesname, sxep, epname, airdate, network)
+	return fmt.Sprintf("Next episode of %s %s '%s' airs %s%s on %s", seriesname, sxep, epname, airdate, delta, network)
 
 }
 
@@ -133,6 +135,13 @@ func latestEpResponse(data TVMazeResponse) string {
 	} else {
 		network = data.WebChannel.Name
 	}
+	fmt.Printf("%v\n", lastEp.Airstamp)
+	delta := ""
+
+	// If there is an airtime, store humanized diff
+	if lastEp.Airstamp != (time.Time{}) {
+		delta = fmt.Sprintf(" (%s)", humanize.Time(lastEp.Airstamp))
+	}
 
 	// Show has ended for some reason
 	status := ""
@@ -146,7 +155,7 @@ func latestEpResponse(data TVMazeResponse) string {
 		airdate = "[UNKNOWN]"
 	}
 
-	return fmt.Sprintf("Latest episode of %s %s '%s' airs %s on %s%s", seriesname, sxep, epname, airdate, network, status)
+	return fmt.Sprintf("Latest episode of %s %s '%s' airs %s%s on %s%s", seriesname, sxep, epname, airdate, delta, network, status)
 }
 
 // TVMaze search for tvmaze and list next episode in series

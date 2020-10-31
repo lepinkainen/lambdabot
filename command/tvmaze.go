@@ -101,7 +101,7 @@ func nextEpResponse(data TVMazeResponse) string {
 	// Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days) on Disney+
 	seriesname := data.Name
 
-	sxep := fmt.Sprintf("%dx%d", data.Embedded.Nextepisode.Season, data.Embedded.Nextepisode.Number)
+	sxep := fmt.Sprintf("%dx%02d", data.Embedded.Nextepisode.Season, data.Embedded.Nextepisode.Number)
 	epname := data.Embedded.Nextepisode.Name
 	airdate := data.Embedded.Nextepisode.Airdate
 
@@ -124,7 +124,7 @@ func latestEpResponse(data TVMazeResponse) string {
 
 	//fmt.Printf("%v\n", lastEp)
 
-	sxep := fmt.Sprintf("%dx%d", lastEp.Season, lastEp.Number)
+	sxep := fmt.Sprintf("%dx%02d", lastEp.Season, lastEp.Number)
 	epname := lastEp.Name
 	airdate := lastEp.Airdate
 	network := ""

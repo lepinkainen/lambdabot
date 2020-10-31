@@ -128,9 +128,16 @@ func latestEpResponse(data TVMazeResponse) string {
 		network = data.WebChannel.Name
 	}
 
+	// Show has ended for some reason
 	status := ""
 	if data.Status == "Ended" {
 		status = " [Ended]"
+	}
+
+	// No "next episode" data, but there is a latest episode in a non-eded show ->
+	// We know there will be more, we just don't know _when_
+	if airdate == "" {
+		airdate = "[UNKNOWN]"
 	}
 
 	return fmt.Sprintf("Latest episode of %s %s '%s' airs %s on %s%s", seriesname, sxep, epname, airdate, network, status)
@@ -156,7 +163,7 @@ func TVMaze(args string) (string, error) {
 
 	response, err := parseResponse(bytes)
 
-	// Show has next episode, hasn't ended
+	// Show has known next episode, hasn't ended
 	if !(response.Embedded.Nextepisode == (Nextepisode{})) {
 		return nextEpResponse(response), nil
 	}

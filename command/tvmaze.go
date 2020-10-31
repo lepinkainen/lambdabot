@@ -127,7 +127,7 @@ func latestEpResponse(data TVMazeResponse) string {
 	sxep := fmt.Sprintf("%dx%d", lastEp.Season, lastEp.Number)
 	epname := lastEp.Name
 	airdate := lastEp.Airdate
-	network := "[N/A]"
+	network := ""
 	if data.WebChannel == (WebChannel{}) {
 		network = data.Network.Name
 	} else {
@@ -168,6 +168,10 @@ func TVMaze(args string) (string, error) {
 	}
 
 	response, err := parseResponse(bytes)
+	if err != nil {
+		log.Errorf("Could not parse TVMaze response")
+		return "", err
+	}
 
 	// Show has known next episode, hasn't ended
 	if !(response.Embedded.Nextepisode == (Nextepisode{})) {

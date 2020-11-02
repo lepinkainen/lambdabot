@@ -2,7 +2,6 @@ package lambda
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	log "github.com/sirupsen/logrus"
@@ -45,8 +44,8 @@ func HandleRequest(ctx context.Context, cmd Command) (Command, error) {
 		return cmd, err
 	}
 
-	// No handler matched
-	cmd.Result = fmt.Sprintf("Unknown command: %s", cmd.Command)
+	// No handler matched, empty result
+	//cmd.Result = fmt.Sprintf("Unknown command: %s", cmd.Command)
 	return cmd, nil
 }
 

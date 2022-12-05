@@ -12,10 +12,10 @@ func TestTVMaze(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		//{"Mandalorean", args{args: "mandalorean"}, "Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days from now) on Disney+", false},
-		{"Gilmore Girls", args{args: "gilmore girls"}, "Latest episode of Gilmore Girls 7x22 'Bon Voyage' airs 2007-05-15 (14 years ago) on The CW [Ended]", false},
-		{"The Grand Tour", args{args: "grand tour"}, "Latest episode of The Grand Tour 4x02 'The Grand Tour Presents: A Massive Hunt' airs 2020-12-17 (4 months ago) on Amazon Prime Video", false},
-		{"Doctor Who", args{args: "doctor who"}, "Latest episode of Doctor Who 12x10 'The Timeless Children' airs 2020-03-01 (1 year ago) on BBC One", false},
+		{"Obi-Wan Kenobi", args{args: "obi wan kenobi"}, "Latest episode of Obi-Wan Kenobi 1x06 'Part VI' airs 2022-06-22 (5 months ago) on Disney+ [Ended]", false},
+		{"Gilmore Girls", args{args: "gilmore girls"}, "Latest episode of Gilmore Girls 7x22 'Bon Voyage' airs 2007-05-15 (15 years ago) on The CW [Ended]", false},
+		{"The Grand Tour", args{args: "grand tour"}, "Latest episode of The Grand Tour 5x01 'The Grand Tour Presents: A Scandi Flick' airs 2022-09-16 (2 months ago) on Prime Video", false},
+		{"Doctor Who", args{args: "doctor who"}, "Latest episode of Doctor Who 13x06 'Chapter Six: The Vanquishers' airs 2021-12-05 (1 year ago) on BBC One", false},
 	}
 	for _, tt := range tests {
 		tt := tt

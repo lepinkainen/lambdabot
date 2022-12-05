@@ -1,13 +1,12 @@
 module github.com/lepinkainen/lambdabot
 
+go 1.19
+
 require (
-	github.com/aws/aws-lambda-go v1.29.0
+	github.com/aws/aws-lambda-go v1.36.0
 	github.com/dustin/go-humanize v1.0.0
-	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.8.1
-	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect
-	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	github.com/sirupsen/logrus v1.9.0
 )
 
-go 1.13
+require golang.org/x/sys v0.3.0 // indirect

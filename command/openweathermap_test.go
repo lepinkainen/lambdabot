@@ -1,12 +1,12 @@
 package command
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
 func loadJSON(name string) []byte {
-	bytes, err := ioutil.ReadFile(name)
+	bytes, err := os.ReadFile(name)
 	if err != nil {
 		panic(err)
 	}

@@ -3,7 +3,7 @@ package command
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"os"
@@ -72,7 +72,7 @@ func OpenWeather(args string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	bytes, err := ioutil.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Errorf("Unable to read response: %v", err)
 		return "", err

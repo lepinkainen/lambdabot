@@ -2,7 +2,7 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -28,7 +28,7 @@ func WolframAlpha(args string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Errorf("Unable to read response from WolframAlpha: %v", err)
 		return "", errors.Wrap(err, "Unable to read response")

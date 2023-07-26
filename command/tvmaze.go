@@ -3,7 +3,7 @@ package command
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -170,7 +170,7 @@ func TVMaze(args string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	bytes, err := ioutil.ReadAll(res.Body)
+	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Errorf("Unable to read response from TVMaze: %v", err)
 		return "", errors.Wrap(err, "Unable to read response")

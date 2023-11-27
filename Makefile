@@ -1,4 +1,5 @@
 FUNCNAME=lambdabot
+BINARYNAME=bootstrap
 BUILDDIR=build
 
 .PHONY: build
@@ -9,10 +10,11 @@ export $(shell sed 's/=.*//' .env)
 
 
 build: test
-	env GOOS=linux GOARCH=amd64 go build -o $(BUILDDIR)/$(FUNCNAME)
-	cd $(BUILDDIR) && zip $(FUNCNAME).zip $(FUNCNAME)
+	env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -tags lambda.norpc -o $(BUILDDIR)/$(BINARYNAME)
+	cd $(BUILDDIR) && zip $(FUNCNAME).zip $(BINARYNAME)
 
 test:
+	go vet ./...
 	go test -v ./...
 
 lint:

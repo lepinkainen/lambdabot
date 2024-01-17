@@ -83,6 +83,18 @@ func OpenWeather(args string) (string, error) {
 	return response, err
 }
 
+/*
+For temperatures measured in Celsius and wind speed in kilometers per hour, the formula for calculating wind chill is:
+
+T_wc = 13.12 + 0.6215T - 11.37(V^0.16) + 0.3965T(V^0.16)
+
+Where:
+
+T_wc is the wind chill index in degrees Celsius,
+T is the air temperature in degrees Celsius,
+V is the wind speed at 10 m above ground level in kilometers per hour.
+*/
+
 // Use a formula to calculate wind chill from current temperature in Celsius and wind in m/s
 // returns a float with one decimal place
 func feelsLike(temperature, wind float64) float64 {
@@ -108,6 +120,7 @@ func parseWeather(bytes []byte) (string, error) {
 	}
 
 	feelsLike := feelsLike(float64(data.Main.Temp), float64(data.Wind.Speed))
+
 	result := fmt.Sprintf("%s, %s: Temperature: %.1f°C, feels like: %.1f°C, wind: %.1f m/s, humidity: %d%%, pressure: %dhPa, cloudiness: %d%%",
 		data.Name, data.Sys.Country, data.Main.Temp, feelsLike, data.Wind.Speed, data.Main.Humidity, data.Main.Pressure, data.Clouds.All)
 

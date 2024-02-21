@@ -15,6 +15,6 @@ require (
 )
 
 require (
-	github.com/redis/go-redis/v9 v9.4.0
+	github.com/redis/go-redis/v9 v9.5.1
 	golang.org/x/sys v0.16.0 // indirect
 )

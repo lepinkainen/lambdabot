@@ -13,9 +13,8 @@ func TestTVMaze(t *testing.T) {
 		wantErr bool
 	}{
 		{"Obi-Wan Kenobi", args{args: "obi wan kenobi"}, "Latest episode of Obi-Wan Kenobi 1x06 'Part VI' airs 2022-06-22 (2 years ago) on Disney+ [Ended]", false},
-		{"Gilmore Girls", args{args: "gilmore girls"}, "Latest episode of Gilmore Girls 7x22 'Bon Voyage' airs 2007-05-15 (16 years ago) on The CW [Ended]", false},
-		//{"The Grand Tour", args{args: "grand tour"}, "Latest episode of The Grand Tour 5x02 'The Grand Tour: Eurocrash' airs 2023-06-16 (1 month ago) on Prime Video", false},
-		//{"Doctor Who", args{args: "doctor who"}, "Latest episode of Doctor Who 13x06 'Chapter Six: The Vanquishers' airs 2021-12-05 (2 years ago) on BBC One", false},
+		{"Gilmore Girls", args{args: "gilmore girls"}, "Latest episode of Gilmore Girls 7x22 'Bon Voyage' airs 2007-05-15 (18 years ago) on The CW [Ended]", false},
+		{"The Grand Tour", args{args: "grand tour"}, "Latest episode of The Grand Tour 6x01 'The Grand Tour: One for the Road' airs 2024-09-13 (5 months ago) on Prime Video [Ended]", false},
 	}
 	for _, tt := range tests {
 		tt := tt
@@ -27,7 +26,7 @@ func TestTVMaze(t *testing.T) {
 				return
 			}
 			if got != tt.want {
-				t.Errorf("TVMaze() = %v, want %v", got, tt.want)
+				t.Errorf("TVMaze() = '%v', want '%v'", got, tt.want)
 			}
 		})
 	}

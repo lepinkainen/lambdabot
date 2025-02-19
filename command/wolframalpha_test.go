@@ -12,7 +12,7 @@ func TestWolframAlpha(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{"1 kg in pounds", args{args: "1kg in pounds"}, "1kg in pounds = about 2.2 pounds", false},
+		{"1 kg in pounds", args{args: "1kg in pounds"}, "1kg in pounds = 2.205 lb  (pounds)", false},
 		//{"time conversion", args{args: "1.1.2020 20:33 utc in finland"}, "1.1.2020 20:33 utc in finland = 22.33.00 Eastern European Time, Wednesday, January 1, 2020", false},
 	}
 	for _, tt := range tests {
@@ -23,7 +23,7 @@ func TestWolframAlpha(t *testing.T) {
 				return
 			}
 			if got != tt.want {
-				t.Errorf("WolframAlpha() = %v, want %v", got, tt.want)
+				t.Errorf("WolframAlpha() = '%v', want '%v'", got, tt.want)
 			}
 		})
 	}

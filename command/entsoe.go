@@ -249,6 +249,7 @@ func EntsoeRedis(args string) (string, error) {
 	return fmt.Sprintf("Current: %.2f c/kWh | Lowest: %.2f c/kWh | Highest: %.2f c/kWh", currentPrice*1.24, dayLow*1.24, dayHigh*1.24), nil
 }
 
+/*
 func unixToHourString(unix int64) string {
 	// converting milliseconds to seconds
 	timestamp := unix / 1000
@@ -261,6 +262,7 @@ func unixToHourString(unix int64) string {
 
 	return hour
 }
+*/
 
 func init() {
 	lambda.RegisterHandler("sahko", EntsoeRedis)

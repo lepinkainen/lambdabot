@@ -1,0 +1,62 @@
+version: "3"
+
+vars:
+  FUNCNAME: lambdabot
+  BUILDDIR: build
+
+dotenv: [".env", "{{.ENV}}/.env.", "{{.HOME}}/.env"]
+
+tasks:
+  default:
+    desc: Default task, runs build
+    cmds:
+      - task: build
+
+  build-local:
+    deps: [test]
+    cmds:
+      - go build -o {{.FUNCNAME}}
+
+  build:
+    desc: Build the Go application
+    deps:
+      - task: test
+    cmds:
+      - env GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version={{.GIT_COMMIT}}" -o {{.BUILDDIR}}/bootstrap
+      - cd {{.BUILDDIR}} && zip {{.FUNCNAME}}.zip bootstrap
+    generates:
+      - "{{.BUILDDIR}}/bootstrap"
+      - "{{.BUILDDIR}}/{{.FUNCNAME}}.zip"
+    vars:
+      GIT_COMMIT:
+        sh: git log -n 1 --format=%h
+
+  test:
+    cmds:
+      - go vet ./...
+      - go test -cover -v ./...
+
+  lint:
+    desc: Run Go linters
+    cmds:
+      - golangci-lint run ./...
+    silent: true # to ignore errors but keep the output
+
+  publish:
+    deps: [lint, build]
+    cmds:
+      - aws lambda update-function-code --publish --function-name {{.FUNCNAME}} --zip-file fileb://{{.BUILDDIR}}/{{.FUNCNAME}}.zip
+      - task: verify-deployment
+
+  verify-deployment:
+    desc: Verify Lambda function deployment status
+    cmds:
+      - |
+        echo "Verifying deployment of {{.FUNCNAME}}..."
+        aws lambda get-function --function-name {{.FUNCNAME}} --query 'Configuration.[LastModified,State]' --output text
+        if [ $? -eq 0 ]; then
+          echo "✅ Function {{.FUNCNAME}} deployed successfully"
+        else
+          echo "❌ Function deployment verification failed"
+          exit 1
+        fi

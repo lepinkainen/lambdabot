@@ -50,6 +50,7 @@ tasks:
 
   verify-deployment:
     desc: Verify Lambda function deployment status
+    silent: true
     cmds:
       - |
         echo "Verifying deployment of {{.FUNCNAME}}..."
@@ -60,3 +61,17 @@ tasks:
           echo "❌ Function deployment verification failed"
           exit 1
         fi
+
+  upgrade-deps:
+    desc: Upgrade all dependencies to their latest versions
+    silent: true
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+      - echo "✅ Dependencies upgraded successfully"
+    sources:
+      - go.mod
+      - go.sum
+    generates:
+      - go.mod
+      - go.sum

@@ -12,6 +12,11 @@ tasks:
     cmds:
       - task: build
 
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf {{.BUILDDIR}}
+
   build-local:
     deps: [test]
     cmds:
@@ -20,7 +25,8 @@ tasks:
   build:
     desc: Build the Go application
     deps:
-      - task: test
+      - clean
+      - test
     cmds:
       - env GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version={{.GIT_COMMIT}}" -o {{.BUILDDIR}}/bootstrap
       - cd {{.BUILDDIR}} && zip {{.FUNCNAME}}.zip bootstrap

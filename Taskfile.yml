@@ -37,6 +37,21 @@ tasks:
       GIT_COMMIT:
         sh: git log -n 1 --format=%h
 
+  build-ci:
+    desc: Build the Go application for CI (excludes tests with ci build tag)
+    deps:
+      - clean
+      - test-ci
+    cmds:
+      - env GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version={{.GIT_COMMIT}}" -o {{.BUILDDIR}}/bootstrap
+      - cd {{.BUILDDIR}} && zip {{.FUNCNAME}}.zip bootstrap
+    generates:
+      - "{{.BUILDDIR}}/bootstrap"
+      - "{{.BUILDDIR}}/{{.FUNCNAME}}.zip"
+    vars:
+      GIT_COMMIT:
+        sh: git log -n 1 --format=%h
+
   test:
     cmds:
       - go vet ./...

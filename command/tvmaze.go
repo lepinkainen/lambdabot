@@ -18,23 +18,23 @@ import (
 
 // TVMazeResponse asd
 type TVMazeResponse struct {
-	ID           int         `json:"id"`
-	URL          string      `json:"url"`
-	Name         string      `json:"name"`
-	Type         string      `json:"type"`
-	Language     string      `json:"language"`
-	Genres       []string    `json:"genres"`
-	Status       string      `json:"status"`
-	Runtime      interface{} `json:"runtime"`
-	Premiered    string      `json:"premiered"`
-	OfficialSite string      `json:"officialSite"`
-	Schedule     Schedule    `json:"schedule"`
-	Weight       int         `json:"weight"`
-	Network      WebChannel  `json:"network"`
-	WebChannel   WebChannel  `json:"webChannel"`
-	Summary      string      `json:"summary"`
-	Updated      int         `json:"updated"`
-	Embedded     Embedded    `json:"_embedded"`
+	ID           int        `json:"id"`
+	URL          string     `json:"url"`
+	Name         string     `json:"name"`
+	Type         string     `json:"type"`
+	Language     string     `json:"language"`
+	Genres       []string   `json:"genres"`
+	Status       string     `json:"status"`
+	Runtime      any        `json:"runtime"`
+	Premiered    string     `json:"premiered"`
+	OfficialSite string     `json:"officialSite"`
+	Schedule     Schedule   `json:"schedule"`
+	Weight       int        `json:"weight"`
+	Network      WebChannel `json:"network"`
+	WebChannel   WebChannel `json:"webChannel"`
+	Summary      string     `json:"summary"`
+	Updated      int        `json:"updated"`
+	Embedded     Embedded   `json:"_embedded"`
 }
 
 // Schedule - when does the show air?
@@ -45,9 +45,9 @@ type Schedule struct {
 
 // WebChannel - the network the show is on, pretty much
 type WebChannel struct {
-	ID      int         `json:"id"`
-	Name    string      `json:"name"`
-	Country interface{} `json:"country"`
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Country any    `json:"country"`
 }
 
 // Episodes - all episodes for the show
@@ -67,17 +67,17 @@ type Episodes struct {
 
 // Nextepisode - info about the upcoming episode
 type Nextepisode struct {
-	ID       int         `json:"id"`
-	URL      string      `json:"url"`
-	Name     string      `json:"name"`
-	Season   int         `json:"season"`
-	Number   int         `json:"number"`
-	Type     string      `json:"type"`
-	Airdate  string      `json:"airdate"`
-	Airtime  string      `json:"airtime"`
-	Airstamp time.Time   `json:"airstamp"`
-	Runtime  interface{} `json:"runtime"`
-	Summary  interface{} `json:"summary"`
+	ID       int       `json:"id"`
+	URL      string    `json:"url"`
+	Name     string    `json:"name"`
+	Season   int       `json:"season"`
+	Number   int       `json:"number"`
+	Type     string    `json:"type"`
+	Airdate  string    `json:"airdate"`
+	Airtime  string    `json:"airtime"`
+	Airstamp time.Time `json:"airstamp"`
+	Runtime  any       `json:"runtime"`
+	Summary  any       `json:"summary"`
 }
 
 // Embedded extras, episodes and next episode data

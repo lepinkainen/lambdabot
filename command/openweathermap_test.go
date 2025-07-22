@@ -105,11 +105,11 @@ func TestGetCoordinatesMockServer(t *testing.T) {
 				Lon:     24.9384,
 				Country: "FI",
 			}}
-			json.NewEncoder(w).Encode(response)
+			_ = json.NewEncoder(w).Encode(response)
 			return
 		}
 		if strings.Contains(r.URL.String(), "UnknownCity") {
-			json.NewEncoder(w).Encode(GeocodingResponse{})
+			_ = json.NewEncoder(w).Encode(GeocodingResponse{})
 			return
 		}
 		http.Error(w, "Not found", 404)

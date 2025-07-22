@@ -93,7 +93,7 @@ func OpenWeather(args string) (string, error) {
 }
 
 // getCoordinates gets latitude and longitude for a location
-func getCoordinates(appid, location string) (float64, float64, string, string, error) {
+func getCoordinates(appid, location string) (lat, lon float64, name, country string, err error) {
 	// Geocoding API call with URL encoding for location
 	geoURL := fmt.Sprintf("http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s", url.QueryEscape(location), appid)
 	resp, err := http.Get(geoURL)

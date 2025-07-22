@@ -4,127 +4,182 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/lepinkainen/lambdabot/lambda"
-	log "github.com/sirupsen/logrus"
 )
 
-// OpenWeatherMapJSON is the JSON response for weather
-type OpenWeatherMapJSON struct {
-	Base   string `json:"base"`
-	Clouds struct {
-		All int `json:"all"`
-	} `json:"clouds"`
-	Cod   int `json:"cod"`
-	Coord struct {
-		Lat float64 `json:"lat"`
-		Lon float64 `json:"lon"`
-	} `json:"coord"`
-	Dt   int `json:"dt"`
-	ID   int `json:"id"`
-	Main struct {
-		Humidity int     `json:"humidity"`
-		Pressure int     `json:"pressure"`
-		Temp     float64 `json:"temp"`
-		TempMax  float64 `json:"temp_max"`
-		TempMin  float64 `json:"temp_min"`
-	} `json:"main"`
-	Name string `json:"name"`
-	Sys  struct {
-		Country string  `json:"country"`
-		ID      int     `json:"id"`
-		Message float64 `json:"message"`
-		Sunrise int     `json:"sunrise"`
-		Sunset  int     `json:"sunset"`
-		Type    int     `json:"type"`
-	} `json:"sys"`
-	Visibility int `json:"visibility"`
-	Weather    []struct {
-		Description string `json:"description"`
-		Icon        string `json:"icon"`
-		ID          int    `json:"id"`
-		Main        string `json:"main"`
-	} `json:"weather"`
-	Wind struct {
-		Deg   int     `json:"deg"`
-		Speed float64 `json:"speed"`
-	} `json:"wind"`
+// GeocodingResponse represents the response from OpenWeatherMap Geocoding API
+type GeocodingResponse []struct {
+	Name    string  `json:"name"`
+	Lat     float64 `json:"lat"`
+	Lon     float64 `json:"lon"`
+	Country string  `json:"country"`
+	State   string  `json:"state,omitempty"`
 }
 
-// OpenWeather command handler
-func OpenWeather(args string) (string, error) {
+// OneCallResponse represents the response from OpenWeatherMap One Call API 3.0
+type OneCallResponse struct {
+	Lat      float64        `json:"lat"`
+	Lon      float64        `json:"lon"`
+	Timezone string         `json:"timezone"`
+	Current  CurrentWeather `json:"current"`
+	Alerts   []Alert        `json:"alerts,omitempty"`
+}
 
+// CurrentWeather represents current weather data from One Call API 3.0
+type CurrentWeather struct {
+	Dt         int64              `json:"dt"`
+	Sunrise    int64              `json:"sunrise"`
+	Sunset     int64              `json:"sunset"`
+	Temp       float64            `json:"temp"`
+	FeelsLike  float64            `json:"feels_like"`
+	Pressure   int                `json:"pressure"`
+	Humidity   int                `json:"humidity"`
+	DewPoint   float64            `json:"dew_point"`
+	UVI        float64            `json:"uvi"`
+	Clouds     int                `json:"clouds"`
+	Visibility int                `json:"visibility"`
+	WindSpeed  float64            `json:"wind_speed"`
+	WindDeg    int                `json:"wind_deg"`
+	WindGust   float64            `json:"wind_gust,omitempty"`
+	Weather    []WeatherCondition `json:"weather"`
+}
+
+// WeatherCondition represents weather condition data
+type WeatherCondition struct {
+	ID          int    `json:"id"`
+	Main        string `json:"main"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+}
+
+// Alert represents weather alerts
+type Alert struct {
+	SenderName  string `json:"sender_name"`
+	Event       string `json:"event"`
+	Start       int64  `json:"start"`
+	End         int64  `json:"end"`
+	Description string `json:"description"`
+}
+
+// OpenWeather command handler using One Call API 3.0
+func OpenWeather(args string) (string, error) {
 	if args == "" {
 		args = "Helsinki"
 	}
 
 	appid := os.Getenv("OPENWEATHERMAP_API_KEY")
-
-	apiurl := fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&units=metric&q=%s", appid, args)
-
-	res, err := http.Get(apiurl)
-	if err != nil {
-		log.Errorf("Unable to get API response: %v", err)
-		return "", err
-	}
-	defer res.Body.Close()
-
-	bytes, err := io.ReadAll(res.Body)
-	if err != nil {
-		log.Errorf("Unable to read response: %v", err)
-		return "", err
+	if appid == "" {
+		return "", fmt.Errorf("OPENWEATHERMAP_API_KEY environment variable not set")
 	}
 
-	response, err := parseWeather(bytes)
+	// Get coordinates for the location
+	lat, lon, locationName, country, err := getCoordinates(appid, args)
+	if err != nil {
+		return "", fmt.Errorf("unable to geocode location %s: %v", args, err)
+	}
 
-	return response, err
+	// Get weather data from One Call API
+	weatherData, err := getOneCallWeather(appid, lat, lon)
+	if err != nil {
+		return "", fmt.Errorf("unable to get weather data: %v", err)
+	}
+
+	return formatWeatherResponse(locationName, country, weatherData), nil
 }
 
-/*
-For temperatures measured in Celsius and wind speed in kilometers per hour, the formula for calculating wind chill is:
+// getCoordinates gets latitude and longitude for a location
+func getCoordinates(appid, location string) (float64, float64, string, string, error) {
+	// Geocoding API call with URL encoding for location
+	geoURL := fmt.Sprintf("http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s", url.QueryEscape(location), appid)
+	resp, err := http.Get(geoURL)
+	if err != nil {
+		return 0, 0, "", "", fmt.Errorf("geocoding API request failed: %v", err)
+	}
+	defer resp.Body.Close()
 
-T_wc = 13.12 + 0.6215T - 11.37(V^0.16) + 0.3965T(V^0.16)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, 0, "", "", fmt.Errorf("failed to read geocoding response: %v", err)
+	}
 
-Where:
+	var geoData GeocodingResponse
+	err = json.Unmarshal(body, &geoData)
+	if err != nil {
+		return 0, 0, "", "", fmt.Errorf("failed to parse geocoding response: %v", err)
+	}
 
-T_wc is the wind chill index in degrees Celsius,
-T is the air temperature in degrees Celsius,
-V is the wind speed at 10 m above ground level in kilometers per hour.
-*/
+	if len(geoData) == 0 {
+		return 0, 0, "", "", fmt.Errorf("location not found: %s", location)
+	}
 
-// Use a formula to calculate wind chill from current temperature in Celsius and wind in m/s
-// returns a float with one decimal place
-func feelsLike(temperature, wind float64) float64 {
-
-	windExp := math.Pow(wind, 0.16)
-
-	feelsLike := 13.12 + 0.6215*temperature - 13.956*windExp + 0.4867*temperature*windExp
-
-	return math.Round(feelsLike*10) / 10
+	loc := geoData[0]
+	return loc.Lat, loc.Lon, loc.Name, loc.Country, nil
 }
 
-func parseWeather(bytes []byte) (string, error) {
-	data := &OpenWeatherMapJSON{}
+// getOneCallWeather fetches weather data from One Call API 3.0
+func getOneCallWeather(appid string, lat, lon float64) (*OneCallResponse, error) {
+	apiURL := fmt.Sprintf("https://api.openweathermap.org/data/3.0/onecall?lat=%s&lon=%s&appid=%s&units=metric&exclude=minutely,hourly,daily",
+		strconv.FormatFloat(lat, 'f', 6, 64),
+		strconv.FormatFloat(lon, 'f', 6, 64),
+		appid)
 
-	err := json.Unmarshal(bytes, &data)
+	resp, err := http.Get(apiURL)
 	if err != nil {
-		log.Errorf("Unable to unmarshal result JSON")
-		return "", err
+		return nil, fmt.Errorf("One Call API request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("One Call API returned status %d", resp.StatusCode)
 	}
 
-	if data.Cod != 200 {
-		return "", fmt.Errorf("API Error: %v", data)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read One Call API response: %v", err)
 	}
 
-	feelsLike := feelsLike(float64(data.Main.Temp), float64(data.Wind.Speed))
+	var weatherData OneCallResponse
+	err = json.Unmarshal(body, &weatherData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse One Call API response: %v", err)
+	}
 
-	result := fmt.Sprintf("%s, %s: Temperature: %.1f°C, feels like: %.1f°C, wind: %.1f m/s, humidity: %d%%, pressure: %dhPa, cloudiness: %d%%",
-		data.Name, data.Sys.Country, data.Main.Temp, feelsLike, data.Wind.Speed, data.Main.Humidity, data.Main.Pressure, data.Clouds.All)
+	return &weatherData, nil
+}
 
-	return result, nil
+// formatWeatherResponse formats the weather data into a human-readable string
+func formatWeatherResponse(locationName, country string, weatherData *OneCallResponse) string {
+	current := weatherData.Current
+	description := ""
+	if len(current.Weather) > 0 {
+		description = current.Weather[0].Description
+	}
+
+	// Build base response
+	result := fmt.Sprintf("%s, %s: Temperature: %.1f°C, feels like: %.1f°C, wind: %.1f m/s, humidity: %d%%, pressure: %dhPa, cloudiness: %d%%, %s",
+		locationName, country, current.Temp, current.FeelsLike, current.WindSpeed, current.Humidity, current.Pressure, current.Clouds, description)
+
+	// Add UV index if available
+	if current.UVI > 0 {
+		result += fmt.Sprintf(", UV index: %.1f", current.UVI)
+	}
+
+	// Add weather alerts if any
+	if len(weatherData.Alerts) > 0 {
+		if len(weatherData.Alerts) == 1 {
+			result += fmt.Sprintf(" ⚠️ %s", weatherData.Alerts[0].Event)
+		} else {
+			// Multiple alerts - show count and first event
+			result += fmt.Sprintf(" ⚠️ %s (+%d more alerts)", weatherData.Alerts[0].Event, len(weatherData.Alerts)-1)
+		}
+	}
+
+	return result
 }
 
 func init() {
@@ -132,5 +187,6 @@ func init() {
 	lambda.RegisterHandler("forecast", OpenWeather)
 }
 
-// TODO: Forecasts
-// https://openweathermap.org/forecast5
+// TODO: Enhanced forecasts using One Call API 3.0 hourly/daily data
+// TODO: Weather alert notifications
+// TODO: Historical weather data

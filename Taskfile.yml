@@ -26,6 +26,8 @@ tasks:
     desc: Build the Go application
     deps:
       - clean
+      - format
+      - lint
       - test
     cmds:
       - env GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version={{.GIT_COMMIT}}" -o {{.BUILDDIR}}/bootstrap
@@ -41,6 +43,8 @@ tasks:
     desc: Build the Go application for CI (excludes tests with ci build tag)
     deps:
       - clean
+      - format
+      - lint
       - test-ci
     cmds:
       - env GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version={{.GIT_COMMIT}}" -o {{.BUILDDIR}}/bootstrap
@@ -51,6 +55,11 @@ tasks:
     vars:
       GIT_COMMIT:
         sh: git log -n 1 --format=%h
+
+  format:
+    desc: Format Go code with goimports
+    cmds:
+      - goimports -w .
 
   test:
     cmds:

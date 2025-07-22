@@ -29,7 +29,7 @@ func runLocal() {
 		os.Exit(1)
 	}
 
-	result, err := lambda.HandleRequest(context.Background(), cmd)
+	result, err := lambda.HandleRequest(context.Background(), &cmd)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error handling request: %v\n", err)
 		os.Exit(1)

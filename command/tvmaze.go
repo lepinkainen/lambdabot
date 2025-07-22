@@ -98,7 +98,7 @@ func parseResponse(bytes []byte) (TVMazeResponse, error) {
 	return data, nil
 }
 
-func nextEpResponse(data TVMazeResponse) string {
+func nextEpResponse(data *TVMazeResponse) string {
 	// Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days) on Disney+
 	seriesname := data.Name
 
@@ -118,13 +118,11 @@ func nextEpResponse(data TVMazeResponse) string {
 
 }
 
-func latestEpResponse(data TVMazeResponse) string {
+func latestEpResponse(data *TVMazeResponse) string {
 	lastEp := data.Embedded.Episodes[len(data.Embedded.Episodes)-1]
 
 	// Next episode of The Mandalorian 2x02 'Chapter 10: The Confrontation' airs 2020-11-06 (5 days) on Disney+
 	seriesname := data.Name
-
-	//fmt.Printf("%v\n", lastEp)
 
 	sxep := fmt.Sprintf("%dx%02d", lastEp.Season, lastEp.Number)
 	epname := lastEp.Name
@@ -184,10 +182,10 @@ func TVMaze(args string) (string, error) {
 
 	// Show has known next episode, hasn't ended
 	if !(response.Embedded.Nextepisode == (Nextepisode{})) {
-		return nextEpResponse(response), nil
+		return nextEpResponse(&response), nil
 	}
 
-	return latestEpResponse(response), nil
+	return latestEpResponse(&response), nil
 }
 
 func init() {

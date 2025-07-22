@@ -28,7 +28,7 @@ func RegisterHandler(command string, function handlerFunc) {
 }
 
 // HandleRequest is the function entry point
-func HandleRequest(ctx context.Context, cmd Command) (Command, error) {
+func HandleRequest(_ context.Context, cmd *Command) (*Command, error) {
 
 	log.Infof("Handling %v", cmd)
 
@@ -45,7 +45,7 @@ func HandleRequest(ctx context.Context, cmd Command) (Command, error) {
 	}
 
 	// No handler matched, empty result
-	//cmd.Result = fmt.Sprintf("Unknown command: %s", cmd.Command)
+	// cmd.Result = fmt.Sprintf("Unknown command: %s", cmd.Command)
 	return cmd, nil
 }
 

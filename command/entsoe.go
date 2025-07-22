@@ -151,7 +151,7 @@ func GetPriceString() (string, error) {
 }
 
 // Echo echoes the arguments back
-func Entsoe(args string) (string, error) {
+func Entsoe(_ string) (string, error) {
 	return GetPriceString()
 }
 
@@ -165,7 +165,7 @@ const DBNAME = "entsoe:fi"
 //
 // args: A string representing the arguments for the Redis client.
 // Returns: A string containing the formatted current, lowest, and highest prices in c/kWh, and an error if any.
-func EntsoeRedis(args string) (string, error) {
+func EntsoeRedis(_ string) (string, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_ADDR"),
 		Username: "default",
@@ -180,9 +180,7 @@ func EntsoeRedis(args string) (string, error) {
 
 	var currentPrice = 999999999.0
 	var dayLow = 999999999.0
-	//var dayLowHourString = "00"
 	var dayHigh = -999999999.0
-	//var dayHighHourString = "00"
 
 	// This time we want times specifically in the Finnish time zone
 	location, _ := time.LoadLocation("Europe/Helsinki")
@@ -223,7 +221,6 @@ func EntsoeRedis(args string) (string, error) {
 	tsValue, _ = valueSlice.Result()
 	if len(tsValue) > 0 {
 		dayHigh = tsValue[0].Value
-		//dayHighHourString = unixToHourString(tsValue[0].Timestamp)
 	}
 
 	// Grab minimum from redis
@@ -238,7 +235,6 @@ func EntsoeRedis(args string) (string, error) {
 	tsValue, _ = valueSlice.Result()
 	if len(tsValue) > 0 {
 		dayLow = tsValue[0].Value
-		//dayLowHourString = unixToHourString(tsValue[0].Timestamp)
 	}
 
 	// TODO: dayLow and dayHigh are not working properly

@@ -15,7 +15,7 @@ type Price struct {
 }
 
 // Grab Pirkka price from API and respond
-func Pirkka(args string) (string, error) {
+func Pirkka(_ string) (string, error) {
 	url := "https://juho.tech/api/pirkka_price"
 
 	response, err := http.Get(url)

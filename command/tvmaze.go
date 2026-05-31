@@ -181,7 +181,7 @@ func TVMaze(args string) (string, error) {
 	}
 
 	// Show has known next episode, hasn't ended
-	if !(response.Embedded.Nextepisode == (Nextepisode{})) {
+	if response.Embedded.Nextepisode != (Nextepisode{}) {
 		return nextEpResponse(&response), nil
 	}
 

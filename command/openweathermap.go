@@ -130,12 +130,12 @@ func getOneCallWeather(appid string, lat, lon float64) (*OneCallResponse, error)
 
 	resp, err := http.Get(apiURL)
 	if err != nil {
-		return nil, fmt.Errorf("One Call API request failed: %v", err)
+		return nil, fmt.Errorf("one Call API request failed: %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("One Call API returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("one Call API returned status %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)

@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/aws/aws-lambda-go v1.54.0
-	github.com/dustin/go-humanize v1.0.1
+	github.com/dustin/go-humanize v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.4
 )
